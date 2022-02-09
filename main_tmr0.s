@@ -39,6 +39,13 @@ PROCESSOR 16F887
 // config statements should precede project file includes.
 #include <xc.inc>
   
+  RESET_TMR0 MACRO TMR_VAR
+    BANKSEL TMR0	    ; cambiamos de banco
+    MOVLW   TMR_VAR
+    MOVWF   TMR0	    ; 50ms retardo
+    BCF	    T0IF	    ; limpiamos bandera de interrupción
+    ENDM
+  
 PSECT udata_shr		    ; Memoria compartida
     W_TEMP:		DS 1
     STATUS_TEMP:	DS 1
@@ -60,7 +67,7 @@ PUSH:
 ISR:
     ;BTFSC   T0IF
     ;CALL    INT_TMR0
-    CALL    RESET_TMR0
+    RESET_TMR0 61
     INCF    PORTD
     
     ;BTFSC   RBIF
@@ -119,12 +126,12 @@ CONFIG_TMR0:
     return 
 
 ; Cada vez que se cumple el tiempo del TMR0 es necesario reiniciarlo.
-RESET_TMR0:
+/*RESET_TMR0:
     BANKSEL TMR0	    ; cambiamos de banco
     MOVLW   61
     MOVWF   TMR0	    ; 50ms retardo
     BCF	    T0IF	    ; limpiamos bandera de interrupción
-    return
+    return*/
     
  CONFIG_IO:
     BANKSEL ANSEL
